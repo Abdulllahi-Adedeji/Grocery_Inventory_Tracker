@@ -1,4 +1,5 @@
 from db_Connector import get_connection
+from tabulate import tabulate
 
 def view_items(category=None, low_stock_only=False):
     conn = get_connection()
@@ -8,7 +9,7 @@ def view_items(category=None, low_stock_only=False):
         sql = "SELECT item_id, name, quantity, price, category, expiry_date, low_stock_min FROM items"
         filters = []
         values = []
-
+        
         if category:
             filters.append("category = %s")
             values.append(category)
@@ -19,7 +20,7 @@ def view_items(category=None, low_stock_only=False):
         if filters:
             sql += " WHERE " + " AND ".join(filters)
 
-        sql += " ORDER BY name"  
+        sql += " ORDER BY name"
 
         cursor.execute(sql, tuple(values))
         rows = cursor.fetchall()
@@ -28,11 +29,9 @@ def view_items(category=None, low_stock_only=False):
             print("No items found.")
             return
 
-        print(f"{'ID':<5} {'Name':<20} {'Qty':<5} {'Price':<8} {'Category':<15} {'Expiry':<12} {'LowStockMin':<12}")
-        print("-" * 80)
-        for row in rows:
-            item_id, name, quantity, price, category, expiry_date, low_stock_min = row
-            print(f"{item_id:<5} {name:<20} {quantity:<5} {price:<8.2f} {str(category):<15} {str(expiry_date):<12} {low_stock_min:<12}")
+        headers = ["ID", "Name", "Qty", "Price", "Category", "Expiry", "LowStockMin"]
+
+        print(tabulate(rows, headers=headers, tablefmt="pretty"))
 
     except Exception as e:
         print(" Failed to fetch items:", e)
