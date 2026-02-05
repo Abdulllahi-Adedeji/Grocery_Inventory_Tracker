@@ -30,7 +30,7 @@ def add_item(name, quantity, price, category=None, expiry_date=None, low_stock_m
 
 
         if quantity <= low_stock_min:
-            print(f"⚠️ {name} is low on stock!")
+            print(f" {name} is low on stock!")
 
     except Exception as e:
         print("Error:", e)
